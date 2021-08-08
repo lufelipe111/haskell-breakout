@@ -17,6 +17,8 @@ executable projeto-final
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
+  other-modules:       Breakout
+                     , MoveController
   build-depends:       base >= 4.7 && < 5
                      , gloss
   ghc-options: -O2 -Wall 
