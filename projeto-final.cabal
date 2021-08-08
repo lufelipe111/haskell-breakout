@@ -18,7 +18,9 @@ executable projeto-final
   main-is:             Main.hs
   default-language:    Haskell2010
   other-modules:       Breakout
-                     , MoveController
+                     , KeysController
+                     , BallController
+                     , PaddleController
   build-depends:       base >= 4.7 && < 5
                      , gloss
   ghc-options: -O2 -Wall 

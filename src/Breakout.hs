@@ -13,7 +13,7 @@ data BreakGame = Game
 initialState :: BreakGame
 initialState = Game
   { ballPos = (0, 0)
-  , ballVel = (0, -150)
+  , ballVel = (0, ballYVel)
   , playerPos = 0
   , leftLongMove = False
   , rightLongMove = False
@@ -37,3 +37,13 @@ window = InWindow "Breakout" (width, height) (offset, offset)
 
 background :: Color
 background = black
+
+ballRadius :: Float
+ballRadius = 7
+
+
+ballXVel :: Float
+ballXVel = -300
+
+ballYVel :: Float
+ballYVel = -150

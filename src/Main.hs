@@ -1,14 +1,16 @@
 module Main where
 
 import Graphics.Gloss
-import MoveController
 import Breakout
+import KeysController
+import BallController
+import PaddleController
 
 render :: BreakGame -> Picture
 render game =
   pictures [ball, mkPaddle  (playerPos game) $ fromIntegral $ -(height `div` 2) + 20]
   where
-    ball = uncurry translate (ballPos game) $ color ballColor $ circleSolid 7
+    ball = uncurry translate (ballPos game) $ color ballColor $ circleSolid ballRadius
     ballColor = white
 
     mkPaddle :: Float -> Float -> Picture
