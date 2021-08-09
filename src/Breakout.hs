@@ -3,30 +3,35 @@ module Breakout where
 import Graphics.Gloss
 
 data BreakGame = Game
-  { ballPos       :: (Float, Float)
-  , ballVel       :: (Float, Float)
-  , playerPos     :: Float
-  , leftLongMove  :: Bool
-  , rightLongMove :: Bool
+  { ballPos        :: (Float, Float)
+  , ballVel        :: (Float, Float)
+  , playerPos      :: Float
+  , leftLongMove   :: Bool
+  , rightLongMove  :: Bool
+  , isPaddleSticky :: Bool
+  , xDistBallPad   :: Float
   } deriving Show
 
 initialState :: BreakGame
 initialState = Game
-  { ballPos = (0, 0)
-  , ballVel = (0, ballYVel)
-  , playerPos = 0
-  , leftLongMove = False
-  , rightLongMove = False
+  { ballPos        = (0, 0)
+  , ballVel        = (0, ballYVel)
+  , playerPos      = 0
+  , leftLongMove   = False
+  , rightLongMove  = False
+  , isPaddleSticky = False
+  , xDistBallPad  = 0
   }
 
 fps :: Int
 fps = 30
 
-width, height, offset, paddleOffset :: Int
+width, height, offset, paddleFloorDist, paddleX :: Int
 width = 800
 height = 400
 offset = 100
-paddleOffset = 20
+paddleFloorDist = 20
+paddleX = -(height `div` 2) + paddleFloorDist
 
 pWidth, pHeight :: Float
 pWidth = 80
@@ -47,3 +52,6 @@ ballXVel = -300
 
 ballYVel :: Float
 ballYVel = -150
+
+deadOffset :: Float
+deadOffset = 50

@@ -8,7 +8,7 @@ import PaddleController
 
 render :: BreakGame -> Picture
 render game =
-  pictures [ball, mkPaddle  (playerPos game) $ fromIntegral $ -(height `div` 2) + 20]
+  pictures [ball, mkPaddle  (playerPos game) $ fromIntegral paddleX]
   where
     ball = uncurry translate (ballPos game) $ color ballColor $ circleSolid ballRadius
     ballColor = white
@@ -21,7 +21,7 @@ render game =
     paddleColor = light blue
 
 update :: Float -> BreakGame -> BreakGame
-update seconds = wallBounce . ceilBounce . paddleBounce . movePaddle . moveBall seconds
+update seconds = moveBall seconds . wallBounce . ceilBounce . paddleBounce . movePaddle . deadBall
 
 main :: IO ()
 main = play window background fps initialState render handleKeys update
