@@ -21,6 +21,8 @@ executable projeto-final
                      , KeysController
                      , BallController
                      , PaddleController
+                     , TileModel
   build-depends:       base >= 4.7 && < 5
                      , gloss
-  ghc-options: -O2 -Wall 
+                     , parallel
+  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N 

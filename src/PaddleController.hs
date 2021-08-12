@@ -9,8 +9,8 @@ movePaddle game = game { playerPos = x' }
     rightBorder = playerPos game + (pWidth / 2)
     x' | leftLongMove game  
          && not (rightLongMove game) 
-         && leftBorder > fromIntegral (-width `div` 2) = playerPos game - 5
+         && leftBorder > fromIntegral (-width `div` 2) = playerPos game - playerVel game
        | rightLongMove game 
          && not (leftLongMove  game)
-         && rightBorder < fromIntegral (width `div` 2) = playerPos game + 5
+         && rightBorder < fromIntegral (width `div` 2) = playerPos game + playerVel game
        | otherwise = playerPos game
