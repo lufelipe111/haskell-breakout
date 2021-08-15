@@ -111,18 +111,66 @@ bottomTileCollision (x, y) radius t =
     tileRightBorder   = tXPos + (tileWidth t  / 2)
     tileLeftBorder    = tXPos - (tileWidth t  / 2)
 
+leftTileCollision :: (Float, Float) -> Float -> Tile -> Bool
+leftTileCollision (x, y) radius t =
+     y + radius >= tileBottomBorder
+  && y - radius <= tileTopBorder
+  && x + radius <= tileRightBorder
+  && x + radius >= tileLeftBorder
+  where
+    (tXPos, tYPos)    = tilePos t
+    tileTopBorder     = tYPos + (tileHeight t / 2)
+    tileBottomBorder  = tYPos - (tileHeight t / 2)
+    tileRightBorder   = tXPos + (tileWidth t  / 2)
+    tileLeftBorder    = tXPos - (tileWidth t  / 2)
+
+rightTileCollision :: (Float, Float) -> Float -> Tile -> Bool
+rightTileCollision (x, y) radius t =
+     y + radius >= tileBottomBorder
+  && y - radius <= tileTopBorder
+  && x - radius <= tileRightBorder
+  && x - radius >= tileLeftBorder
+  where
+    (tXPos, tYPos)    = tilePos t
+    tileTopBorder     = tYPos + (tileHeight t / 2)
+    tileBottomBorder  = tYPos - (tileHeight t / 2)
+    tileRightBorder   = tXPos + (tileWidth t  / 2)
+    tileLeftBorder    = tXPos - (tileWidth t  / 2)
+
 
 tileBounce :: BreakGame -> BreakGame
-tileBounce game = game { ballVel = (vx', vy'), tiles = tiles'}
+tileBounce game = game { ballPos = (x', y'), ballVel = (vx', vy'), tiles = tiles''}
   where
-    tiles' = filter 
-                (\t -> 
-                   not (bottomTileCollision (ballPos game) ballRadius t)
-                && not (topTileCollision (ballPos game) ballRadius t)) (tiles game)
     (vx, vy) = ballVel game
+    (x , y ) = ballPos game
     bottomCollisionList = parMap rpar (bottomTileCollision (ballPos game) ballRadius) (tiles game)
-    topCollisionList    = parMap rpar (topTileCollision (ballPos game) ballRadius) (tiles game)
-    vy' | or bottomCollisionList = - (abs vy)
-        | or topCollisionList = abs vy
+    topCollisionList    = parMap rpar (topTileCollision    (ballPos game) ballRadius) (tiles game)
+    leftCollisionList   = parMap rpar (leftTileCollision   (ballPos game) ballRadius) (tiles game)
+    rightCollisionList  = parMap rpar (rightTileCollision  (ballPos game) ballRadius) (tiles game)
+    vx' | or leftCollisionList  = -(abs vx)
+        | or rightCollisionList =   abs vx
+        | otherwise = vx
+    vy' | or bottomCollisionList = -(abs vy)
+        | or topCollisionList    =   abs vy
         | otherwise = vy
-    vx' = vx
+    x'  | or leftCollisionList  = x - 0.01            -- Line to prevent double collision at once
+        | or rightCollisionList = x + 0.01
+        | otherwise = x
+    y'  | or bottomCollisionList = y - 0.01           -- Line to prevent double collision at once
+        | or topCollisionList    = y + 0.01
+        | otherwise = y
+    tiles' = map (decreaseTileState cond) (tiles game)        -- decrementa estado a cada condição
+    tiles''= filter (\t' -> tileState t' >= 0) tiles'         -- remove tiles com states 0 ou menor
+    cond t = bottomTileCollision (ballPos game) ballRadius t  -- se houve alguma das colisões
+          || topTileCollision    (ballPos game) ballRadius t
+          || leftTileCollision   (ballPos game) ballRadius t
+          || rightTileCollision  (ballPos game) ballRadius t
+
+decreaseTileState :: (Tile -> Bool) -> Tile -> Tile
+decreaseTileState cond t 
+  | cond t = t { tileState = tileState t - 1 }
+  | otherwise = t
+
+ballController :: BreakGame -> BreakGame
+ballController = tileBounce . wallBounce . ceilBounce . tileBounce . paddleBounce . deadBall
+

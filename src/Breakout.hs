@@ -40,34 +40,29 @@ initialState = Game
   }
 
 testTiles :: [Tile]
-testTiles = [Tile { tileColor  = red
-                  , tilePos    = (15, 20)
-                  , tileState  = 1
-                  , tileHeight = tHgt
-                  , tileWidth  = tWid
-                  },
-                  Tile { tileColor  = blue
-                  , tilePos    = (50, 20)
-                  , tileState  = 1
-                  , tileHeight = tHgt
-                  , tileWidth  = tWid
-                  } 
-            ]
+testTiles = [ Tile { tilePos    = (15, 20)
+                   , tileState  = 1
+                   , tileHeight = tHgt
+                   , tileWidth  = tWid
+                   }
+            , Tile { tilePos    = (50, 20)
+                   , tileState  = 1
+                   , tileHeight = tHgt
+                   , tileWidth  = tWid
+                   }]
 
 generateTiles :: Integer -> Integer -> [Tile]
 generateTiles x y | y == 0 =    []
-                  | x == 1 =    Tile { tileColor = makeColor 1 1 1 1
-                                     , tilePos = (xPos, yPos)
-                                     , tileState = 0
+                  | x == 1 =    Tile { tilePos = (xPos, yPos)
+                                     , tileState = 19
                                      , tileHeight = tHgt
                                      , tileWidth = tWid
                                      } : generateTiles xTilesNum (y-1)
-                  | otherwise = Tile { tileColor = makeColor 1 1 1 1
-                                      , tilePos = (xPos, yPos)
-                                      , tileState = 1
-                                      , tileHeight = tHgt
-                                      , tileWidth = tWid
-                                      } : generateTiles (x-1) y
+                  | otherwise = Tile { tilePos = (xPos, yPos)
+                                     , tileState = 19
+                                     , tileHeight = tHgt
+                                     , tileWidth = tWid
+                                     } : generateTiles (x-1) y
   where
     xPos = fromIntegral ((-xTilesNum-2) * tilesCenterDist `div` 2 + fromIntegral x * tilesCenterDist + margin)
     yPos = fromIntegral (y * 20)
