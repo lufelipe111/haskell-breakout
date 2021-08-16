@@ -9,7 +9,7 @@ data Tile = Tile
   , tileState  :: Integer
   , tileHeight :: Float
   , tileWidth  :: Float
-  } deriving Show
+  } deriving (Show, Eq)
 
 data Tile' = Tile'
   { tilePicture'  :: Picture
@@ -17,7 +17,7 @@ data Tile' = Tile'
   , tileState'    :: Integer
   , tileHeight'   :: Float
   , tileWidth'    :: Float
-  } deriving Show
+  } deriving (Show, Eq)
 
 tilePic :: [Picture] -> Tile -> Picture
 tilePic tileBMPs tile
@@ -27,6 +27,6 @@ tilePic tileBMPs tile
     state  = tileState tile
     height = tileHeight tile
     width  = tileWidth tile
-    bmpWidth = 384
-    bmpHeight = 128
+    bmpWidth = 384                       -- Largura do arquivo bitmap
+    bmpHeight = 128                      -- Altura do arquivo bitmap
     (tileX, tileY)  = tilePos tile

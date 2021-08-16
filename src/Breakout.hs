@@ -3,7 +3,7 @@ module Breakout where
 import Graphics.Gloss
 import TileModel
 
-data BreakGame = Game
+data BreakGame = Start | GameOver | Game
   { ballPos        :: (Float, Float)
   , ballVel        :: (Float, Float)
   , playerPos      :: Float
@@ -13,7 +13,9 @@ data BreakGame = Game
   , isPaddleSticky :: Bool
   , xDistBallPad   :: Float
   , tiles          :: [Tile]
-  } deriving Show
+  , points         :: Int
+  , lifes          :: Int
+  } deriving (Show, Eq)
 
 xTilesNum :: Integer
 xTilesNum = 15
@@ -26,6 +28,9 @@ tWid = 30
 tHgt :: Float
 tHgt = 10
 
+startState :: BreakGame
+startState = Start
+
 initialState :: BreakGame
 initialState = Game
   { ballPos        = (0, 0)
@@ -37,6 +42,8 @@ initialState = Game
   , isPaddleSticky = False
   , xDistBallPad   = 0
   , tiles          = generateTiles xTilesNum yTilesNum
+  , points         = 0
+  , lifes          = 3
   }
 
 testTiles :: [Tile]

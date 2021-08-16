@@ -6,18 +6,24 @@ import KeysController
 import BallController
 import PaddleController
 import TileModel
-import Control.Parallel.Strategies
 
 -- Convert a world to a picture
 render :: BreakGame -> [Picture] -> Picture
-render game tileBMPs  =
-  pictures [ ball
-           , mkPaddle (playerPos game) $ fromIntegral paddleX
-           , mkTiles (tiles game)
-           ]
+render game tileBMPs
+  | game == Start = startScene
+  | game == GameOver = gameOverScene
+  | otherwise = inGameScene
+
   where
     ball = uncurry translate (ballPos game) $ color ballColor $ circleSolid ballRadius
     ballColor = white
+    pointsPic = color white $ translate (-380) 150 $ scale 0.12 0.12 $ text $ "Points: " ++ show (points game)
+    lifesPic  = color white $ translate   250  150 $ scale 0.12 0.12 $ text $ "Lifes: " ++ show (lifes game)
+    walls = pictures[ translate (-(fromIntegral width / 2)) 0 $ color white $ rectangleSolid 3 (fromIntegral height)
+                    , translate   (fromIntegral width / 2 ) 0 $ color white $ rectangleSolid 3 (fromIntegral height)
+                    , translate 0 (-(fromIntegral height / 2))$ color white $ rectangleSolid (fromIntegral width)  3
+                    , translate 0   (fromIntegral height / 2) $ color white $ rectangleSolid (fromIntegral width)  3
+                    ]
 
     mkPaddle :: Float -> Float -> Picture
     mkPaddle x y = pictures
@@ -26,11 +32,38 @@ render game tileBMPs  =
     paddleColor = light blue
 
     mkTiles :: [Tile] -> Picture
-    mkTiles ts = pictures $ parMap rpar (tilePic tileBMPs) ts
+    mkTiles ts = pictures $ map (tilePic tileBMPs) ts
+
+    -- Start Scene
+    startScene = pictures [ color white $ translate (-105)  70   $ scale 0.4 0.4   $ text "Breakout"
+                          , color white $ translate (-195)(-50 ) $ scale 0.2 0.2   $ text "Press [Enter] to start game"
+                          , color white $ translate (-95) (-180) $ scale 0.14 0.14 $ text "Developed by Azzolini"
+                          , walls
+                          ]
+
+    -- In-Game Scene
+    inGameScene = pictures [ ball
+                           , mkPaddle (playerPos game) $ fromIntegral paddleX
+                           , mkTiles (tiles game)
+                           , pointsPic
+                           , walls
+                           , lifesPic
+                           ]
+
+    -- Game Over Scene
+    gameOverScene = pictures [ color white $ translate (-105)  70   $ scale 0.4 0.4   $ text "Game Over"
+                             , color white $ translate (-195)(-50 ) $ scale 0.2 0.2   $ text "Press [Enter] to start game"
+                             , color white $ translate (-95) (-180) $ scale 0.14 0.14 $ text "Developed by Azzolini"
+                             , walls
+                             ]
+
+
+
 
 -- look at what and the order that need to be validated and updated
 update :: Float -> BreakGame -> BreakGame
-update seconds = moveBall seconds . movePaddle . ballController
+update seconds game | game == Start || game == GameOver = game
+                    | otherwise = moveBall seconds . movePaddle . ballController $ game
 
 main :: IO ()
 main = do
@@ -74,4 +107,4 @@ main = do
                  , grayBreakTile
                  , brownTile
                  , brownBreakTile]
-  play window background fps initialState (`render` tilePics) handleKeys update
+  play window background fps startState (`render` tilePics) handleKeys update
