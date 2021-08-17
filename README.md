@@ -16,6 +16,7 @@ Projeto final para matéria de Paradigmas de Programação ministrada na Univers
 
 Para a execução no WSL2 usando a distro *Ubuntu18.04* foi necessário instalar os pacotes *freeglut3 freeglut3-dev*.
 Para utilizar o programa basta executar a linha de comando abaixo, dentro da pasta raiz do projeto:
+	
 	stack run
 
 ## Links
